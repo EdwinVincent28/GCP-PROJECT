@@ -1,0 +1,17 @@
+# Python tracking
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+uv.lock
+
+.env
+.env.local
+
+# IDEs
+.vscode/
+.idea/
+
+# OS files
+.DS_Store
+
