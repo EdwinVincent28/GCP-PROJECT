@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fastapi-backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: fastapi-backend
+  template:
+    metadata:
+      labels:
+        app: fastapi-backend
+    spec:
+      containers:
+      - name: fastapi-container
+        image: us-central1-docker.pkg.dev/acs-assignment-497901/acs-backend-repo/fastapi-app:v1
+        ports:
+        - containerPort: 8000
+        env:
+        - name: GCP_PROJECT_ID
+          value: "acs-assignment-497901"
+        - name: GCS_BUCKET_NAME
+          value: "gcp-bucket-srh"
+        - name: GOOGLE_APPLICATION_CREDENTIALS
+          value: "/app/secrets/gcp-key.json"
+        
+        # This securely injects your service account key into the container
+        volumeMounts:
+        - name: gcp-key-volume
+          mountPath: "/app/secrets"
+          readOnly: true
+      volumes:
+      - name: gcp-key-volume
+        secret:
+          secretName: gcp-key-secret
