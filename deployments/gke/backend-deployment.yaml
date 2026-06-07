@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: fastapi-container
-        image: us-central1-docker.pkg.dev/acs-assignment-497901/acs-backend-repo/fastapi-app:v1
+        image: us-central1-docker.pkg.dev/acs-assignment-497901/acs-backend-repo/fastapi-app:v2
         ports:
         - containerPort: 8000
         env:
@@ -24,6 +24,16 @@ spec:
           value: "gcp-bucket-srh"
         - name: GOOGLE_APPLICATION_CREDENTIALS
           value: "/app/secrets/gcp-key.json"
+        - name: MONGO_URI
+          valueFrom:
+            secretKeyRef:
+              name: backend-secrets
+              key: MONGO_URI
+        - name: SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              name: backend-secrets
+              key: SECRET_KEY
         
         # This securely injects your service account key into the container
         volumeMounts:
