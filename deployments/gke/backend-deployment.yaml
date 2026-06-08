@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: fastapi-container
-        image: us-central1-docker.pkg.dev/acs-assignment-497901/acs-backend-repo/fastapi-app:v2
+        image: us-central1-docker.pkg.dev/acs-assignment-497901/acs-backend-repo/fastapi-app:v3
         ports:
         - containerPort: 8000
         env:

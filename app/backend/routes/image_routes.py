@@ -34,6 +34,7 @@ async def upload_image(
         return ImageResponse(
             id=str(result.inserted_id),
             filename=file.filename,
+            image_url=gcs_url,
             status="Successfully uploaded to GCP and metadata saved."
         )
         

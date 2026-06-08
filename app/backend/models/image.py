@@ -11,4 +11,5 @@ class ImageMetadata(BaseModel):
 class ImageResponse(BaseModel):
     id: str
     filename: str
+    image_url: str
     status: str
