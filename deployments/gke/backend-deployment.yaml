@@ -14,9 +14,14 @@ spec:
     spec:
       containers:
       - name: fastapi-container
-        image: us-central1-docker.pkg.dev/acs-assignment-497901/acs-backend-repo/fastapi-app:v3
+        image: us-central1-docker.pkg.dev/acs-assignment-497901/acs-backend-repo/fastapi-app:v4
         ports:
         - containerPort: 8000
+        resources:
+          requests:
+            cpu: "100m"
+          limits:
+            cpu: "250m"
         env:
         - name: GCP_PROJECT_ID
           value: "acs-assignment-497901"

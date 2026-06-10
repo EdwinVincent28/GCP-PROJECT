@@ -20,3 +20,15 @@ app.include_router(image_routes.router, prefix="/api", tags=["Images"])
 @app.get("/")
 def read_root():
     return {"status": "healthy", "message": "FastAPI is running and connected to MongoDB!"}
+
+@app.get("/health-load")
+def run_cpu_load():
+    count = 0
+    for i in range(5_000_000):
+        count += i
+        
+    return {
+        "status": "under-load",
+        "message": "CPU task completed successfully!",
+        "result_preview": count
+    }
