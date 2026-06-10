@@ -11,21 +11,19 @@ steps:
       - 'push'
       - 'us-central1-docker.pkg.dev/$PROJECT_ID/acs-backend-repo/fastapi-app:$COMMIT_SHA'
 
-  - name: 'gcr.io/cloud-builders/gcloud'
-    args:
-      - 'container'
-      - 'clusters'
-      - 'get-credentials'
-      - 'acs-cluster'
-      - '--zone'
-      - 'us-central1'
-      - '--project'
-      - '$PROJECT_ID'
-
-  - name: 'gcr.io/cloud-builders/kubectl'
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     entrypoint: 'bash'
     args:
       - '-c'
       - |
-        sed -i 's|image: .*|image: us-central1-docker.pkg.dev/$PROJECT_ID/acs-backend-repo/fastapi-app:$COMMIT_SHA|g' deployments/gke/backend-deployment.yaml
+        echo "Fetching cluster security credentials..."
+        gcloud container clusters get-credentials acs-cluster --zone us-central1 --project $PROJECT_ID
+        
+        echo "Swapping image tags in the deployment file..."
+        sed -i "s|image: .*|image: us-central1-docker.pkg.dev/$PROJECT_ID/acs-backend-repo/fastapi-app:$COMMIT_SHA|g" deployments/gke/backend-deployment.yaml
+        
+        echo "Injecting changes into the Kubernetes cluster..."
         kubectl apply -f deployments/gke/backend-deployment.yaml
+
+options:
+  logging: CLOUD_LOGGING_ONLY
