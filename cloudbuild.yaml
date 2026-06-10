@@ -1,0 +1,29 @@
+steps:
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - 'build'
+      - '-t'
+      - 'us-central1-docker.pkg.dev/$PROJECT_ID/acs-backend-repo/fastapi-app:$COMMIT_SHA'
+      - '.'
+
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - 'push'
+      - 'us-central1-docker.pkg.dev/$PROJECT_ID/acs-backend-repo/fastapi-app:$COMMIT_SHA'
+
+  - name: 'gcr.io/cloud-builders/gcloud'
+    args:
+      - 'container'
+      - 'clusters'
+      - 'get-credentials'
+      - 'acs-cluster'
+      - '--zone'
+      - 'us-central1'
+
+  - name: 'gcr.io/cloud-builders/kubectl'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        sed -i 's|image: .*|image: us-central1-docker.pkg.dev/$PROJECT_ID/acs-backend-repo/fastapi-app:$COMMIT_SHA|g' deployments/gke/backend-deployment.yaml
+        kubectl apply -f deployments/gke/backend-deployment.yaml
