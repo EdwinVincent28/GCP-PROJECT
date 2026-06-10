@@ -19,6 +19,8 @@ steps:
       - 'acs-cluster'
       - '--zone'
       - 'us-central1'
+      - '--project'
+      - '$PROJECT_ID'
 
   - name: 'gcr.io/cloud-builders/kubectl'
     entrypoint: 'bash'
