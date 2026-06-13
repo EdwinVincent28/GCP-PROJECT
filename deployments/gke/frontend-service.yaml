@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend-service
+spec:
+  type: LoadBalancer # Tells GCP to provision a public IP
+  selector:
+    app: frontend # Links this service strictly to her frontend pods
+  ports:
+    - protocol: TCP
+      port: 80 # The port the public internet hits
+      targetPort: 80 # The port Nginx is listening on inside the container

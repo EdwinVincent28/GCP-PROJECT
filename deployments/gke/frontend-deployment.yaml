@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend-deployment
+  labels:
+    app: frontend
+spec:
+  replicas: 1 # Starts with 1 pod to save resources
+  selector:
+    matchLabels:
+      app: frontend
+  template:
+    metadata:
+      labels:
+        app: frontend
+    spec:
+      containers:
+        - name: react-frontend
+          # Note: She will need to push her image to Artifact Registry
+          # just like you did for the backend. Replace this URL with her path.
+          image: us-central1-docker.pkg.dev/acs-assignment-497901/acs-frontend-repo/react-app:latest
+          ports:
+            - containerPort: 80
+          resources:
+            requests:
+              cpu: "250m"
+              memory: "256Mi"
+            limits:
+              cpu: "500m"
+              memory: "512Mi"
