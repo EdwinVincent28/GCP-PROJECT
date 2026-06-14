@@ -1,8 +1,10 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
-const UPLOAD_URL = "/api/upload";
+const UPLOAD_URL = "http://35.238.33.237/api/upload";
 
 export default function Dashboard() {
+	const navigate = useNavigate();
 	const [token, setToken] = useState(null);
 	const [tokenType, setTokenType] = useState("bearer");
 	const [file, setFile] = useState(null);
@@ -17,18 +19,18 @@ export default function Dashboard() {
 		const storedType = localStorage.getItem("token_type");
 
 		if (!storedToken) {
-			window.location.href = "/login";
+			navigate("/login");
 			return;
 		}
 
 		setToken(storedToken);
 		setTokenType(storedType || "bearer");
-	}, []);
+	}, [navigate]);
 
 	const handleLogout = () => {
 		localStorage.removeItem("access_token");
 		localStorage.removeItem("token_type");
-		window.location.href = "/login";
+		navigate("/login");
 	};
 
 	const handleFileChange = (e) => {
@@ -114,16 +116,29 @@ export default function Dashboard() {
 				<h2 style={styles.sectionTitle}>Upload an image</h2>
 
 				<form onSubmit={handleUpload} style={styles.form}>
+					<label htmlFor="file-input" style={styles.dropZone}>
+						{previewUrl ? (
+							<img
+								src={previewUrl}
+								alt="Preview"
+								style={styles.dropZoneImage}
+							/>
+						) : (
+							<div style={styles.dropZonePlaceholder}>
+								<span style={styles.dropZoneIcon}>+</span>
+								<span>Choose an image</span>
+							</div>
+						)}
+					</label>
 					<input
+						id="file-input"
 						type="file"
 						accept="image/*"
 						onChange={handleFileChange}
-						style={styles.fileInput}
+						style={styles.hiddenFileInput}
 					/>
 
-					{previewUrl && (
-						<img src={previewUrl} alt="Preview" style={styles.preview} />
-					)}
+					{file && <p style={styles.fileName}>{file.name}</p>}
 
 					{message && (
 						<div
@@ -215,10 +230,56 @@ const styles = {
 	form: {
 		display: "flex",
 		flexDirection: "column",
+		alignItems: "center",
 		gap: 16,
 	},
 	fileInput: {
 		fontSize: 14,
+	},
+	dropZone: {
+		display: "flex",
+		alignItems: "center",
+		justifyContent: "center",
+		maxWidth: 320,
+		maxHeight: 320,
+		minWidth: 120,
+		minHeight: 120,
+		border: "2px dashed #ccc",
+		borderRadius: 12,
+		cursor: "pointer",
+		overflow: "hidden",
+		background: "#fafafa",
+		transition: "border-color 0.15s ease",
+	},
+	dropZonePlaceholder: {
+		display: "flex",
+		flexDirection: "column",
+		alignItems: "center",
+		gap: 8,
+		color: "#888",
+		fontSize: 14,
+		padding: "40px 60px",
+	},
+	dropZoneIcon: {
+		fontSize: 32,
+		fontWeight: 300,
+		lineHeight: 1,
+	},
+	dropZoneImage: {
+		display: "block",
+		maxWidth: 320,
+		maxHeight: 320,
+		width: "auto",
+		height: "auto",
+		objectFit: "contain",
+	},
+	hiddenFileInput: {
+		display: "none",
+	},
+	fileName: {
+		fontSize: 13,
+		color: "#666",
+		margin: 0,
 	},
 	preview: {
 		maxWidth: "100%",
@@ -236,7 +297,7 @@ const styles = {
 		border: "none",
 		borderRadius: 8,
 		cursor: "pointer",
-		alignSelf: "flex-start",
+		alignSelf: "flex-end",
 	},
 	message: {
 		fontSize: 13,
