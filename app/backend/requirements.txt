@@ -113,3 +113,6 @@ urllib3==2.7.0
     # via requests
 uvicorn==0.49.0
     # via backend (pyproject.toml)
+ultralytics>=8.4.67
+numpy>=2.4.6
+opencv-python-headless>=4.13.0.92
