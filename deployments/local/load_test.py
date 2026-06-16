@@ -2,7 +2,8 @@ import asyncio
 import httpx
 import time
 
-TARGET_URL = "https://acs-assignment-497901.uc.r.appspot.com/api/health-load"
+TARGET_URL = "https://acs-assignment-497901.appspot.com/health-load"
+
 
 CONCURRENT_REQUESTS = 50  # Number of parallel tasks hitting your app
 TOTAL_BURSTS = 10         # How many times to repeat the flood
