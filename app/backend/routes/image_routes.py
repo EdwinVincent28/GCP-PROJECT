@@ -65,3 +65,30 @@ async def upload_image(
         
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Upload failed: {str(e)}")
+    
+@router.get("/all", response_model=list[ImageResponse])
+async def get_all_user_images(
+    db = Depends(get_db),
+    current_user = Depends(get_current_user)
+):
+    try:
+        collection = db["images"]
+
+        cursor = collection.find({"owner_email": current_user["email"]}).sort("_id", -1)
+        documents = await cursor.to_list(length=500)
+        
+        formatted_images = []
+        for doc in documents:
+            formatted_images.append(
+                ImageResponse(
+                    id=str(doc["_id"]),
+                    filename=doc.get("filename", "unknown"),
+                    image_url=doc.get("gcs_url", ""),
+                    status="Fetched from database",
+                    detected_objects=doc.get("detected_objects", [])
+                )
+            )  
+        return formatted_images
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to fetch images: {str(e)}")
