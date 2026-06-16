@@ -34,6 +34,7 @@ steps:
 
         sed -i "s|image: .*|image: us-central1-docker.pkg.dev/$PROJECT_ID/acs-frontend-repo/react-app:$COMMIT_SHA|g" deployments/gke/frontend-deployment.yaml
         kubectl apply -f deployments/gke/frontend-deployment.yaml
+        kubectl apply -f deployments/gke/frontend-service.yaml
 
 options:
   logging: CLOUD_LOGGING_ONLY

@@ -28,10 +28,18 @@ COPY --from=builder /app/dist /usr/share/nginx/html
 RUN echo $'\n\
 server {\n\
     listen 80;\n\
+    \n\
     location / {\n\
         root /usr/share/nginx/html;\n\
         index index.html index.htm;\n\
         try_files $uri $uri/ /index.html;\n\
+    }\n\
+    \n\
+    # Tell Nginx to act exactly like the Vite proxy\n\
+    location /api/ {\n\
+        proxy_pass http://35.238.33.237/api/;\n\
+        proxy_set_header Host $host;\n\
+        proxy_set_header X-Real-IP $remote_addr;\n\
     }\n\
 }\n\
 ' > /etc/nginx/conf.d/default.conf
