@@ -13,4 +13,4 @@ class ImageResponse(BaseModel):
     filename: str
     image_url: str
     status: str
-    detected_objects: List[str]
+    detected_objects: list[str]
