@@ -1,11 +1,12 @@
-runtime: nodejs22        # 🌟 Configures the Node.js runtime environment
-service: default         # 🌟 Must be named 'default'
+runtime: python311  # We use the python runtime just to serve static assets efficiently
+service: default
 
-# App Engine reads your frontend package.json "start" script automatically, 
-# but you can explicitly state it here if needed:
-entrypoint: npm run start 
+handlers:
+# 1. Route requests for static assets directly to Vite's output folder
+- url: /assets
+  static_dir: dist/assets
 
-automatic_scaling:
-  min_instances: 1
-  max_instances: 3
-  target_cpu_utilization: 0.60
+# 2. Route absolutely all other web traffic to your main index.html file
+- url: /.*
+  static_files: dist/index.html
+  upload: dist/index.html
