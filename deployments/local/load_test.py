@@ -10,7 +10,7 @@ TOTAL_BURSTS = 10         # How many times to repeat the flood
 async def send_heavy_request(client, request_id):
     try:
         start = time.time()
-        response = client.get(TARGET_URL, timeout=30.0)
+        response = await client.get(TARGET_URL, timeout=30.0)
         duration = time.time() - start
         print(f"Request {request_id}: Status {response.status_code} in {duration:.2f}s")
     except Exception as e:
