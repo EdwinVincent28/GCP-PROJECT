@@ -1,0 +1,8 @@
+dispatch:
+  # Route all API network requests directly to your FastAPI backend service
+  - url: "*/api/*"
+    service: backend
+
+  # Route absolutely everything else (pages, server-rendered views) to the Node frontend
+  - url: "*/*"
+    service: default

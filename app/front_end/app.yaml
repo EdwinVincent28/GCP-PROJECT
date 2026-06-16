@@ -1,0 +1,14 @@
+front end:
+
+
+runtime: nodejs22        # 🌟 Configures the Node.js runtime environment
+service: default         # 🌟 Must be named 'default'
+
+# App Engine reads your frontend package.json "start" script automatically, 
+# but you can explicitly state it here if needed:
+entrypoint: npm run start 
+
+automatic_scaling:
+  min_instances: 1
+  max_instances: 3
+  target_cpu_utilization: 0.60
