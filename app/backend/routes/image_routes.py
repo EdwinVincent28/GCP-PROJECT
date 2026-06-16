@@ -5,13 +5,24 @@ from routes.auth_routes import get_current_user
 from models.image import ImageMetadata, ImageResponse
 
 from ultralytics import YOLO
+
+import os
+# Get the exact absolute directory path of your running app
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+MODEL_PATH = os.path.join(BASE_DIR, "yolov8n.pt")
+
+
+
 import cv2
 import numpy as np
 
 router = APIRouter()
 
-print("Initializing YOLOv8 object detection model...")
-model = YOLO("yolov8n.pt")
+#print("Initializing YOLOv8 object detection model...")
+#model = YOLO("yolov8n.pt")
+print(f"Loading local YOLOv8 weights from: {MODEL_PATH}")
+model = YOLO(MODEL_PATH)
+
 
 @router.post("/upload", response_model=ImageResponse)
 async def upload_image(
