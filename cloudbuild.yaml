@@ -1,23 +1,39 @@
 steps:
-  - name: 'gcr.io/cloud-builders/docker'
-    dir: 'app/backend'
+  - name: "gcr.io/cloud-builders/docker"
+    dir: "app/backend"
     args:
-      - 'build'
-      - '-t'
-      - 'us-central1-docker.pkg.dev/$PROJECT_ID/acs-backend-repo/fastapi-app:$COMMIT_SHA'
-      - '.'
-  - name: 'gcr.io/cloud-builders/docker'
+      - "build"
+      - "-t"
+      - "us-central1-docker.pkg.dev/$PROJECT_ID/acs-backend-repo/fastapi-app:$COMMIT_SHA"
+      - "."
+  - name: "gcr.io/cloud-builders/docker"
     args:
-      - 'push'
-      - 'us-central1-docker.pkg.dev/$PROJECT_ID/acs-backend-repo/fastapi-app:$COMMIT_SHA'
-  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
-    entrypoint: 'bash'
+      - "push"
+      - "us-central1-docker.pkg.dev/$PROJECT_ID/acs-backend-repo/fastapi-app:$COMMIT_SHA"
+
+  - name: "gcr.io/cloud-builders/docker"
+    dir: "app/front_end"
     args:
-      - '-c'
+      - "build"
+      - "-t"
+      - "us-central1-docker.pkg.dev/$PROJECT_ID/acs-frontend-repo/react-app:$COMMIT_SHA"
+      - "."
+  - name: "gcr.io/cloud-builders/docker"
+    args:
+      - "push"
+      - "us-central1-docker.pkg.dev/$PROJECT_ID/acs-frontend-repo/react-app:$COMMIT_SHA"
+
+  - name: "gcr.io/google.com/cloudsdktool/cloud-sdk"
+    entrypoint: "bash"
+    args:
+      - "-c"
       - |
         gcloud container clusters get-credentials acs-cluster --zone us-central1 --project $PROJECT_ID
         sed -i "s|image: .*|image: us-central1-docker.pkg.dev/$PROJECT_ID/acs-backend-repo/fastapi-app:$COMMIT_SHA|g" deployments/gke/backend-deployment.yaml
         kubectl apply -f deployments/gke/backend-deployment.yaml
+
+        sed -i "s|image: .*|image: us-central1-docker.pkg.dev/$PROJECT_ID/acs-frontend-repo/react-app:$COMMIT_SHA|g" deployments/gke/frontend-deployment.yaml
+        kubectl apply -f deployments/gke/frontend-deployment.yaml
 
 options:
   logging: CLOUD_LOGGING_ONLY
