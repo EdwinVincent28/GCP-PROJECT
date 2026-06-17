@@ -35,9 +35,8 @@ server {\n\
         try_files $uri $uri/ /index.html;\n\
     }\n\
     \n\
-    # Tell Nginx to act exactly like the Vite proxy\n\
     location /api/ {\n\
-        proxy_pass http://35.238.33.237/api/;\n\
+        proxy_pass http://fastapi-service.default.svc.cluster.local/api/;\n\
         proxy_set_header Host $host;\n\
         proxy_set_header X-Real-IP $remote_addr;\n\
     }\n\
