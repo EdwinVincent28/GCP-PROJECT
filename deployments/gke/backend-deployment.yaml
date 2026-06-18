@@ -21,7 +21,7 @@ spec:
           requests:
             cpu: "100m"
           limits:
-            cpu: "250m"
+            cpu: "500m"
         env:
         - name: GCP_PROJECT_ID
           value: "acs-assignment-497901"
