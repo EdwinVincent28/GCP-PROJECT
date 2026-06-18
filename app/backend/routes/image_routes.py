@@ -78,32 +78,31 @@ async def upload_image(
         raise HTTPException(status_code=500, detail=f"Upload failed: {str(e)}")
 
 @router.post("/stress-test/detect-only")
-async def stress_test_detection(file: UploadFile = File(...)):
-    if not file.content_type.startswith("image/"):
-        raise HTTPException(status_code=400, detail="File provided is not an image.")
-
-    try:
+async def stress_test_detection(file: Optional[UploadFile] = File(None)):
+    if file is None:
+        # Use a synthetic image for load testing
+        img = np.zeros((640, 640, 3), dtype=np.uint8)
+    else:
+        if not file.content_type.startswith("image/"):
+            raise HTTPException(status_code=400, detail="File provided is not an image.")
         contents = await file.read()
         nparr = np.frombuffer(contents, np.uint8)
         img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
-        
-        detected_items = []
-        if img is not None:
-            results = model(img, verbose=False)
-            for r in results:
-                for c in r.boxes.cls:
-                    detected_items.append(model.names[int(c)])
-        
-        detected_items = list(set(detected_items))
-
-        return {
-            "status": "success", 
-            "message": "Simulated CPU load test complete. Data discarded.",
-            "detected_objects": detected_items
-        }
-        
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Inference failed: {str(e)}")
+        if img is None:
+            img = np.zeros((640, 640, 3), dtype=np.uint8)
+    
+    detected_items = []
+    results = model(img, verbose=False)
+    for r in results:
+        for c in r.boxes.cls:
+            detected_items.append(model.names[int(c)])
+    
+    detected_items = list(set(detected_items))
+    return {
+        "status": "success",
+        "message": "Simulated CPU load test complete. Data discarded.",
+        "detected_objects": detected_items
+    }
     
 @router.get("/all", response_model=list[ImageResponse])
 async def get_all_user_images(
